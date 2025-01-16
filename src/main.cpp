@@ -6,12 +6,16 @@
  * When this callback is fired, it will toggle line 2 of the LCD text between
  * "I was pressed!" and nothing.
  */
-void on_center_button() {
+void on_center_button()
+{
 	static bool pressed = false;
 	pressed = !pressed;
-	if (pressed) {
+	if (pressed)
+	{
 		pros::lcd::set_text(2, "I was pressed!");
-	} else {
+	}
+	else
+	{
 		pros::lcd::clear_line(2);
 	}
 }
@@ -22,7 +26,8 @@ void on_center_button() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {
+void initialize()
+{
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "Hello PROS User!");
 
@@ -73,16 +78,21 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {
+void opcontrol()
+{
 	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	//makes motor group 
-	pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+	// makes motor group
+	pros::MotorGroup left_mg({1, -2, 3});	// Creates a motor group with forwards ports 1 & 3 and reversed port 2
+	pros::MotorGroup right_mg({-4, 5, -6}); // Creates a motor group with forwards port 5 and reversed ports 4 & 6
 
-	while (true) {
+	pros::MotorGroup intake_mg({7}); // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+	pros::MotorGroup conveyor_mg({8}); // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+
+	while (true)
+	{
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
+						 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+						 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0); // Prints status of the emulated screen LCDs
 
 		// Arcade control scheme: one drives, one turns
 		// int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
@@ -90,13 +100,12 @@ void opcontrol() {
 		// left_mg.move(dir - turn);                      // Sets left motor voltage
 		// right_mg.move(dir + turn);                     // Sets right motor voltage
 
-
-		//tank drive: each joystick controls each side
+		// tank drive: each joystick controls each side
 		int left_move = master.get_analog(ANALOG_LEFT_Y);
 		int right_move = master.get_analog(ANALOG_RIGHT_Y);
-		left_mg.move(left_move);                      // Sets left motor voltage
-		right_mg.move(right_move); 
+		left_mg.move(left_move); // Sets left motor voltage
+		right_mg.move(right_move);
 		printf("hello world");
-		pros::delay(20);                               // Run for 20 ms then update
+		pros::delay(20); // Run for 20 ms then update
 	}
 }
