@@ -1,5 +1,23 @@
 #include "main.h"
 
+// Global instances
+pros::Controller master(pros::E_CONTROLLER_MASTER);
+pros::MotorGroup left_mg({1, -2, 3});
+
+// (1, 2, 3) tried
+// (1, 2, -3) tried 
+// (1, -2, 3) tried
+// (1, -2, -3)
+// (-1, -2, -3)
+// 1 and 2 go same direction
+
+// pros::MotorGroup left_mg({1});
+
+
+pros::MotorGroup right_mg({-4, 5, -6});
+pros::MotorGroup intake_mg({19});
+pros::MotorGroup conveyor_mg({-20});
+
 /**
  * A callback function for LLEMU's center button.
  *
@@ -12,6 +30,10 @@ void on_center_button()
 	pressed = !pressed;
 	if (pressed)
 	{
+		// For running auton later
+		// selected_autonomous = (selected_autonomous + 1) % NUM_AUTONOMOUS_ROUTINES;
+		// pros::lcd::set_text(2, "Auton: " + std::to_string(selected_autonomous));
+
 		pros::lcd::set_text(2, "I was pressed!");
 	}
 	else
@@ -52,6 +74,39 @@ void disabled() {}
  */
 void competition_initialize() {}
 
+// HELPER FUNCTIONS
+void drive_forward(int speed, int duration_ms)
+{
+	left_mg.move(speed);
+	right_mg.move(speed);
+	pros::delay(duration_ms);
+	left_mg.move(0);
+	right_mg.move(0);
+}
+
+void turn(int speed, int duration_ms)
+{
+	left_mg.move(speed);
+	right_mg.move(-speed);
+	pros::delay(duration_ms);
+	left_mg.move(0);
+	right_mg.move(0);
+}
+
+void control_intake(int speed, int duration_ms)
+{
+	intake_mg.move(speed);
+	pros::delay(duration_ms);
+	intake_mg.move(0);
+}
+
+void control_conveyor(int speed, int duration_ms)
+{
+	conveyor_mg.move(speed);
+	pros::delay(duration_ms);
+	conveyor_mg.move(0);
+}
+
 /**
  * Runs the user autonomous code. This function will be started in its own task
  * with the default priority and stack size whenever the robot is enabled via
@@ -67,10 +122,6 @@ void autonomous() {}
 
 void drive()
 {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-
-	pros::MotorGroup left_mg({1, -2, 3});	// Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({-4, 5, -6}); // Creates a motor group with forwards port 5 and reversed ports 4 & 6
 	int left_move = master.get_analog(ANALOG_LEFT_Y);
 	int right_move = master.get_analog(ANALOG_RIGHT_Y);
 	left_mg.move(left_move); // Sets left motor voltage
@@ -93,14 +144,6 @@ void drive()
  */
 void opcontrol()
 {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	// makes motor group
-	pros::MotorGroup left_mg({1, -2, 3});	// Creates a motor group with forwards ports 1 & 3 and reversed port 2
-	pros::MotorGroup right_mg({-4, 5, -6}); // Creates a motor group with forwards port 5 and reversed ports 4 & 6
-
-	pros::MotorGroup intake_mg({19});	// Creates a motor group with forwards port 5 and reversed ports 4 & 6
-	pros::MotorGroup conveyor_mg({20}); // Creates a motor group with forwards port 5 and reversed ports 4 & 6
-
 	while (true)
 	{
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
@@ -115,5 +158,41 @@ void opcontrol()
 
 		// tank drive: each joystick controls each side
 		drive();
+
+		// ** Intake and conveyor **
+
+		// intake forward
+		if (master.get_digital(DIGITAL_R1))
+		{
+			intake_mg.move(300);
+		}
+
+		// intake reverse
+		else if (master.get_digital(DIGITAL_R2))
+		{
+			intake_mg.move(-300);
+		}
+		// stop intake
+		else
+		{
+			intake_mg.move(0);
+		}
+
+		// conveyor forward
+		if (master.get_digital(DIGITAL_L1))
+		{
+			conveyor_mg.move(100);
+		}
+		// conveyor reverse
+		else if (master.get_digital(DIGITAL_L2))
+		{
+			conveyor_mg.move(-100);
+		}
+		// stop the conveyor
+		else
+		{
+			conveyor_mg.move(0);
+		}
+		pros::delay(20);
 	}
 }
