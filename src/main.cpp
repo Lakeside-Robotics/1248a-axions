@@ -5,7 +5,7 @@ pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::MotorGroup left_mg({1, -2, 3});
 
 // (1, 2, 3) tried
-// (1, 2, -3) tried 
+// (1, 2, -3) tried
 // (1, -2, 3) tried
 // (1, -2, -3)
 // (-1, -2, -3)
@@ -13,10 +13,10 @@ pros::MotorGroup left_mg({1, -2, 3});
 
 // pros::MotorGroup left_mg({1});
 
-
 pros::MotorGroup right_mg({-4, 5, -6});
-pros::MotorGroup intake_mg({19});
-pros::MotorGroup conveyor_mg({-20});
+pros::MotorGroup intake_mg({19}); // Controlled by right side buttons on controller
+pros::MotorGroup conveyor_mg({-20}); // Controlled by left side buttoms
+pros::ADIDigitalOut mogo_solenoid('A'); // Controlled by A and B buttons
 
 /**
  * A callback function for LLEMU's center button.
@@ -193,6 +193,27 @@ void opcontrol()
 		{
 			conveyor_mg.move(0);
 		}
+
+		// mogo mech
+		bool mogo_active = false;
+		if (master.get_digital_new_press(DIGITAL_A))
+		{
+			mogo_active = true;
+		}
+
+		if (master.get_digital_new_press(DIGITAL_B))
+		{
+			mogo_active = false;
+		}
+		if (mogo_active)
+		{
+			mogo_solenoid.set_value(true);
+		}
+		else
+		{
+			mogo_solenoid.set_value(false);
+		}
+
 		pros::delay(20);
 	}
 }
