@@ -14,9 +14,9 @@ pros::MotorGroup left_mg({1, -2, 3});
 // pros::MotorGroup left_mg({1});
 
 pros::MotorGroup right_mg({-4, 5, -6});
-pros::MotorGroup intake_mg({19}); // Controlled by right side buttons on controller
-pros::MotorGroup conveyor_mg({-20}); // Controlled by left side buttoms
-pros::ADIDigitalOut mogo_solenoid('A'); // Controlled by A and B buttons
+pros::MotorGroup intake_mg({19});		// Controlled by right side buttons on controller
+pros::MotorGroup conveyor_mg({-20});	// Controlled by left side buttoms
+pros::ADIDigitalOut mogo_solenoid('H'); // Controlled by A and B buttons
 
 /**
  * A callback function for LLEMU's center button.
@@ -118,12 +118,22 @@ void control_conveyor(int speed, int duration_ms)
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
-
-void drive()
+void autonomous()
 {
 	int left_move = master.get_analog(ANALOG_LEFT_Y);
 	int right_move = master.get_analog(ANALOG_RIGHT_Y);
+	left_mg.move(127); // Sets left motor voltage
+	right_mg.move(127);
+	pros::delay(1000); // Run for 20 ms then update
+
+	left_mg.move(0);
+	right_mg.move(0);
+}
+
+void drive()
+{
+	int left_move = master.get_analog(ANALOG_RIGHT_Y);
+	int right_move = master.get_analog(ANALOG_LEFT_Y); // ANALOG_LEFT_Y
 	left_mg.move(left_move); // Sets left motor voltage
 	right_mg.move(right_move);
 	printf("hello world");
@@ -144,6 +154,8 @@ void drive()
  */
 void opcontrol()
 {
+	bool mogo_active = false;
+
 	while (true)
 	{
 		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
@@ -195,16 +207,18 @@ void opcontrol()
 		}
 
 		// mogo mech
-		bool mogo_active = false;
 		if (master.get_digital_new_press(DIGITAL_A))
 		{
 			mogo_active = true;
+			pros::delay(20);
 		}
 
 		if (master.get_digital_new_press(DIGITAL_B))
 		{
 			mogo_active = false;
+			pros::delay(20);
 		}
+
 		if (mogo_active)
 		{
 			mogo_solenoid.set_value(true);
