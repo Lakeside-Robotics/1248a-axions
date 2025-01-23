@@ -120,14 +120,31 @@ void control_conveyor(int speed, int duration_ms)
  */
 void autonomous()
 {
+	// start really simple: https://www.youtube.com/shorts/ouInSnVIrC0
+	// path: drive forward and score immediately
+	// rotate
+	// score a ring on the middle wall stake on our side
+	// rotate again and drive forward
+	// try to end by contacting the ladder
+
+	// start with mogo mech facing fowrward
+
 	int left_move = master.get_analog(ANALOG_LEFT_Y);
 	int right_move = master.get_analog(ANALOG_RIGHT_Y);
+	
 	left_mg.move(127); // Sets left motor voltage
 	right_mg.move(127);
-	pros::delay(1000); // Run for 20 ms then update
 
-	left_mg.move(0);
-	right_mg.move(0);
+	// mogo_solenoid.set_value(true);
+	conveyor_mg.move(300); // try to score on mogo
+
+	// still need to add:
+	// turn about 330 degree to the right
+	// drive forward toward wall stake
+	// score
+	// drive backwards until you hit the ladder
+
+	pros::delay(1000); // Run for 20 ms then update
 }
 
 void arcade_drive()
@@ -186,7 +203,7 @@ void opcontrol()
 		// right_mg.move(dir + turn);                     // Sets right motor voltage
 
 		// tank drive: each joystick controls each side
-		//tank_drive();
+		// tank_drive();
 		// arcade drive - right joystick controls turning, left joystick  controls forward/backward
 		arcade_drive();
 
