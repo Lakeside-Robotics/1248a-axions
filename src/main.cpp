@@ -130,11 +130,28 @@ void autonomous()
 	right_mg.move(0);
 }
 
-void drive()
+void arcade_drive()
+{
+	int forward = master.get_analog(ANALOG_LEFT_Y);
+	int turn = master.get_analog(ANALOG_RIGHT_X);
+
+	int left_speed = forward + turn;
+	int right_speed = forward - turn;
+
+	left_speed = std::max(-127, std::min(left_speed, 127));
+	right_speed = std::max(-127, std::min(right_speed, 127));
+
+	left_mg.move(left_speed);
+	right_mg.move(right_speed);
+
+	pros::delay(20);
+}
+
+void tank_drive()
 {
 	int left_move = master.get_analog(ANALOG_RIGHT_Y);
 	int right_move = master.get_analog(ANALOG_LEFT_Y); // ANALOG_LEFT_Y
-	left_mg.move(left_move); // Sets left motor voltage
+	left_mg.move(left_move);						   // Sets left motor voltage
 	right_mg.move(right_move);
 	printf("hello world");
 	pros::delay(20); // Run for 20 ms then update
@@ -169,7 +186,9 @@ void opcontrol()
 		// right_mg.move(dir + turn);                     // Sets right motor voltage
 
 		// tank drive: each joystick controls each side
-		drive();
+		//tank_drive();
+		// arcade drive - right joystick controls turning, left joystick  controls forward/backward
+		arcade_drive();
 
 		// ** Intake and conveyor **
 
