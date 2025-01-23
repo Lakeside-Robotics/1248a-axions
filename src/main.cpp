@@ -228,13 +228,7 @@ void opcontrol()
 		// mogo mech
 		if (master.get_digital_new_press(DIGITAL_A))
 		{
-			mogo_active = true;
-			pros::delay(20);
-		}
-
-		if (master.get_digital_new_press(DIGITAL_B))
-		{
-			mogo_active = false;
+			mogo_active = !mogo_active;
 			pros::delay(20);
 		}
 
