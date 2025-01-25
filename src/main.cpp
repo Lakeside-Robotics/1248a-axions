@@ -130,13 +130,19 @@ void autonomous()
 	// try to end by contacting the ladder
 
 	// start with mogo mech facing fowrward
+	// pros::MotorGroup conveyor_mg({-20});	// Controlled by left side buttoms
+	// pros::ADIDigitalOut mogo_solenoid('H'); // Controlled by A and B buttons
+
+	// try to run the conveyor for 2 seconds
+	conveyor_mg.move(127);
+	pros::delay(2000);
 
 	int left_move = master.get_analog(ANALOG_LEFT_Y);
 	int right_move = master.get_analog(ANALOG_RIGHT_Y);
 
 	conveyor_mg.move(127);
 
-	drive_forward(100, 700); // drive forward at speed 100 for 1.5 seconds
+	drive_forward(100, 700); // drive forward at speed 100 for 0.7 seconds. this makes the robot travel about 2 squares
 	pros::delay(20);
 
 	// get goal
@@ -151,12 +157,12 @@ void autonomous()
 	pros::delay(500);
 	turn(60, 400); // turn right at speed 60 for 2.5 seconds
 	pros::delay(500);
-				   // drive_forward(100, 2000);
-				   // control_conveyor(127, 700);
-				   // pros::delay(500);
-				   // turn(60, 2500); // rotate again and drive towards ladder
-				   // pros::delay(500);
-				   // drive_forward(100, 3000);  // drive forward until contacting the ladder
+	// drive_forward(100, 2000);
+	// control_conveyor(127, 700);
+	// pros::delay(500);
+	// turn(60, 2500); // rotate again and drive towards ladder
+	// pros::delay(500);
+	// drive_forward(100, 3000);  // drive forward until contacting the ladder
 
 	// // still need to add:
 	// // turn about 330 degree to the right
@@ -180,7 +186,7 @@ void arcade_drive()
 
 	left_mg.move(left_speed);
 	right_mg.move(right_speed);
-
+	
 	pros::delay(20);
 }
 
