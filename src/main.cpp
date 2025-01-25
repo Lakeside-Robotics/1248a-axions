@@ -147,9 +147,14 @@ void autonomous()
 
 	// get goal
 	mogo_solenoid.set_value(true);
+
 	// control_conveyor(127, 500); // active conveyor to score
 	conveyor_mg.move(127);
 	pros::delay(1000);
+
+	// EVERYTHING BELOW THIS IS UNTESTED / DOESN'T WORK AS OF 1/24
+
+	
 	// unclamp
 	mogo_solenoid.set_value(false);
 
@@ -186,7 +191,7 @@ void arcade_drive()
 
 	left_mg.move(left_speed);
 	right_mg.move(right_speed);
-	
+
 	pros::delay(20);
 }
 
