@@ -77,6 +77,7 @@ void competition_initialize() {}
 // HELPER FUNCTIONS
 void drive_forward(int speed, int duration_ms)
 {
+	speed = -speed;
 	left_mg.move(speed);
 	right_mg.move(speed);
 	pros::delay(duration_ms);
@@ -120,6 +121,7 @@ void control_conveyor(int speed, int duration_ms)
  */
 void autonomous()
 {
+
 	// start really simple: https://www.youtube.com/shorts/ouInSnVIrC0
 	// path: drive forward and score immediately
 	// rotate
@@ -131,29 +133,47 @@ void autonomous()
 
 	int left_move = master.get_analog(ANALOG_LEFT_Y);
 	int right_move = master.get_analog(ANALOG_RIGHT_Y);
-	
-	left_mg.move(127); // Sets left motor voltage
-	right_mg.move(127);
 
-	// mogo_solenoid.set_value(true);
-	conveyor_mg.move(300); // try to score on mogo
+	conveyor_mg.move(127);
 
-	// still need to add:
-	// turn about 330 degree to the right
-	// drive forward toward wall stake
-	// score
-	// drive backwards until you hit the ladder
+	drive_forward(100, 700); // drive forward at speed 100 for 1.5 seconds
+	pros::delay(20);
 
-	pros::delay(1000); // Run for 20 ms then update
+	// get goal
+	mogo_solenoid.set_value(true);
+	// control_conveyor(127, 500); // active conveyor to score
+	conveyor_mg.move(127);
+	pros::delay(1000);
+	// unclamp
+	mogo_solenoid.set_value(false);
+
+	conveyor_mg.move(0);
+	pros::delay(500);
+	turn(60, 400); // turn right at speed 60 for 2.5 seconds
+	pros::delay(500);
+				   // drive_forward(100, 2000);
+				   // control_conveyor(127, 700);
+				   // pros::delay(500);
+				   // turn(60, 2500); // rotate again and drive towards ladder
+				   // pros::delay(500);
+				   // drive_forward(100, 3000);  // drive forward until contacting the ladder
+
+	// // still need to add:
+	// // turn about 330 degree to the right
+	// // drive forward toward wall stake
+	// // score
+	// // drive backwards until you hit the ladder
+
+	// pros::delay(1000); // Run for 20 ms then update
 }
 
 void arcade_drive()
 {
-	int forward = master.get_analog(ANALOG_LEFT_Y);
-	int turn = master.get_analog(ANALOG_RIGHT_X);
+	int forward = master.get_analog(ANALOG_RIGHT_Y); // or ANALOG_LEFT_Y
+	int turn = master.get_analog(ANALOG_LEFT_X);	 // OR ANALOG_RIGHT_X
 
-	int left_speed = forward + turn;
-	int right_speed = forward - turn;
+	int left_speed = forward - turn;
+	int right_speed = forward + turn;
 
 	left_speed = std::max(-127, std::min(left_speed, 127));
 	right_speed = std::max(-127, std::min(right_speed, 127));
@@ -225,16 +245,15 @@ void opcontrol()
 		{
 			intake_mg.move(0);
 		}
-
 		// conveyor forward
 		if (master.get_digital(DIGITAL_L1))
 		{
-			conveyor_mg.move(100);
+			conveyor_mg.move(127);
 		}
 		// conveyor reverse
 		else if (master.get_digital(DIGITAL_L2))
 		{
-			conveyor_mg.move(-100);
+			conveyor_mg.move(-127);
 		}
 		// stop the conveyor
 		else
