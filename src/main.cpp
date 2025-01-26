@@ -85,6 +85,16 @@ void drive_forward(int speed, int duration_ms)
 	right_mg.move(0);
 }
 
+void drive_backward(int speed, int duration_ms)
+{
+	speed = -speed;
+	left_mg.move(-speed);
+	right_mg.move(-speed);
+	pros::delay(duration_ms);
+	left_mg.move(0);
+	right_mg.move(0);
+}
+
 void turn(int speed, int duration_ms)
 {
 	left_mg.move(speed);
@@ -134,29 +144,27 @@ void autonomous()
 	// pros::ADIDigitalOut mogo_solenoid('H'); // Controlled by A and B buttons
 
 	// try to run the conveyor for 2 seconds
-	conveyor_mg.move(127);
-	pros::delay(2000);
+	// conveyor_mg.move(127);
+	// pros::delay(2000);
 
-	int left_move = master.get_analog(ANALOG_LEFT_Y);
-	int right_move = master.get_analog(ANALOG_RIGHT_Y);
+	// conveyor_mg.move(127);
 
-	conveyor_mg.move(127);
-
-	drive_forward(100, 700); // drive forward at speed 100 for 0.7 seconds. this makes the robot travel about 2 squares
+	drive_forward(100, 1500); // drive forward at speed 100 for 0.7 seconds. this makes the robot travel about 2 squares
 	pros::delay(20);
 
-	// get goal
-	mogo_solenoid.set_value(true);
-	// control_conveyor(127, 500); // active conveyor to score
-	conveyor_mg.move(127);
-	pros::delay(1000);
-	// unclamp
-	mogo_solenoid.set_value(false);
+	// // get goal
+	// mogo_solenoid.set_value(true);
+	// // control_conveyor(127, 500); // active conveyor to score
+	// conveyor_mg.move(127);
+	// pros::delay(1000);
+	// // unclamp
+	// mogo_solenoid.set_value(false);
 
-	conveyor_mg.move(0);
-	pros::delay(500);
-	turn(60, 400); // turn right at speed 60 for 2.5 seconds
-	pros::delay(500);
+	// conveyor_mg.move(0);
+	// pros::delay(500);
+	// turn(60, 400); // turn right at speed 60 for 2.5 seconds
+	// pros::delay(500);
+
 	// drive_forward(100, 2000);
 	// control_conveyor(127, 700);
 	// pros::delay(500);
@@ -175,8 +183,8 @@ void autonomous()
 
 void arcade_drive()
 {
-	int forward = master.get_analog(ANALOG_RIGHT_Y); // or ANALOG_LEFT_Y
-	int turn = master.get_analog(ANALOG_LEFT_X);	 // OR ANALOG_RIGHT_X
+	int forward = master.get_analog(ANALOG_LEFT_Y); // or ANALOG_LEFT_Y
+	int turn = master.get_analog(ANALOG_RIGHT_X);	 // OR ANALOG_RIGHT_X
 
 	int left_speed = forward - turn;
 	int right_speed = forward + turn;
@@ -283,6 +291,18 @@ void opcontrol()
 			mogo_solenoid.set_value(false);
 		}
 
+		//emergency buttons
+		if (master.get_digital_new_press(DIGITAL_RIGHT))
+		{
+			drive_forward(100, 0.25);
+			pros::delay(20);
+		}
+
+		if (master.get_digital_new_press(DIGITAL_LEFT))
+		{
+			drive_backward(100, 0.25);
+			pros::delay(20);
+		}
 		pros::delay(20);
 	}
 }
