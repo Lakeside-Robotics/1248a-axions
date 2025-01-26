@@ -194,7 +194,7 @@ void arcade_drive()
 
 	left_mg.move(left_speed);
 	right_mg.move(right_speed);
-	
+
 	pros::delay(20);
 }
 
