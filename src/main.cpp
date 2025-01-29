@@ -223,6 +223,8 @@ void tank_drive()
 void opcontrol()
 {
 	bool mogo_active = false;
+	bool intake_active = false;
+	bool outake_active = false;
 
 	while (true)
 	{
@@ -244,22 +246,52 @@ void opcontrol()
 		// ** Intake and conveyor **
 
 		// intake forward
-		if (master.get_digital(DIGITAL_R1))
+		// if (master.get_digital(DIGITAL_R1))
+		// {
+		// 	intake_mg.move(300);
+		// }
+
+		// // intake reverse
+		// else if (master.get_digital(DIGITAL_R2))
+		// {
+		// 	intake_mg.move(-300);
+		// }
+		// stop intake
+		// else
+		// {
+		// 	intake_mg.move(0);
+		// }
+		// conveyor forward
+
+		// intake code
+		//changed so when you press r1 it starts intaking and when you press again it stops
+		if (master.get_digital_new_press(DIGITAL_R1))
+		{
+			intake_active = !intake_active;
+			outake_active = false;
+			pros::delay(20);
+		}
+
+		else if (master.get_digital_new_press(DIGITAL_R2))
+		{
+			outake_active = !outake_active;
+			intake_active = false;
+			pros::delay(20);
+		}
+
+		if (intake_active)
 		{
 			intake_mg.move(300);
 		}
-
-		// intake reverse
-		else if (master.get_digital(DIGITAL_R2))
+		else if (outake_active)
 		{
 			intake_mg.move(-300);
 		}
-		// stop intake
 		else
 		{
 			intake_mg.move(0);
 		}
-		// conveyor forward
+
 		if (master.get_digital(DIGITAL_L1))
 		{
 			conveyor_mg.move(127);
