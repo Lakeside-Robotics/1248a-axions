@@ -225,6 +225,10 @@ void opcontrol()
 	bool mogo_active = false;
 	bool intake_active = false;
 	bool outake_active = false;
+	bool conveyor_in = false;
+	bool conveyor_out = false;
+	bool conveyor_in_active = false;
+	bool conveyor_out_active = false;
 
 	while (true)
 	{
@@ -291,6 +295,36 @@ void opcontrol()
 		{
 			intake_mg.move(0);
 		}
+
+
+		// conveyor code
+		//changed so when you press r1 it starts intaking and when you press again it stops
+		// if (master.get_digital_new_press(DIGITAL_L1))
+		// {
+		// 	conveyor_in = !conveyor_in;
+		// 	conveyor_out = false;
+		// 	pros::delay(20);
+		// }
+
+		// else if (master.get_digital_new_press(DIGITAL_L2))
+		// {
+		// 	conveyor_out = !conveyor_out;
+		// 	conveyor_in = false;
+		// 	pros::delay(20);
+		// }
+
+		// if (conveyor_in_active)
+		// {
+		// 	conveyor_mg.move(127);
+		// }
+		// else if (conveyor_out_active)
+		// {
+		// 	conveyor_mg.move(-127);
+		// }
+		// else
+		// {
+		// 	conveyor_mg.move(0);
+		// }
 
 		if (master.get_digital(DIGITAL_L1))
 		{
