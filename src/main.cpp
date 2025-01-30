@@ -107,6 +107,8 @@ void turn(int speed, int duration_ms)
 void control_intake(int speed, int duration_ms)
 {
 	intake_mg.move(speed);
+	conveyor_mg.move(speed); // temporary-does conveyor move?
+
 	pros::delay(duration_ms);
 	intake_mg.move(0);
 }
@@ -146,15 +148,16 @@ void autonomous()
 	// try to run the conveyor for 2 seconds
 	// conveyor_mg.move(127);
 	// pros::delay(2000);
-
 	// conveyor_mg.move(127);
 
 	drive_forward(100, 1500); // drive forward at speed 100 for 0.7 seconds. this makes the robot travel about 2 squares
 	pros::delay(20);
 
+	control_intake(127, 5000); // 5 sec max speed
+
 	// // get goal
 	// mogo_solenoid.set_value(true);
-	// // control_conveyor(127, 500); // active conveyor to score
+	// control_conveyor(127, 500); // active conveyor to score
 	// conveyor_mg.move(127);
 	// pros::delay(1000);
 	// // unclamp
@@ -184,7 +187,7 @@ void autonomous()
 void arcade_drive()
 {
 	int forward = master.get_analog(ANALOG_LEFT_Y); // or ANALOG_LEFT_Y
-	int turn = master.get_analog(ANALOG_RIGHT_X);	 // OR ANALOG_RIGHT_X
+	int turn = master.get_analog(ANALOG_RIGHT_X);	// OR ANALOG_RIGHT_X
 
 	int left_speed = forward - turn;
 	int right_speed = forward + turn;
@@ -225,8 +228,8 @@ void opcontrol()
 	bool mogo_active = false;
 	bool intake_active = false;
 	bool outake_active = false;
-	bool conveyor_in = false;
-	bool conveyor_out = false;
+	// bool conveyor_in = false;
+	// bool conveyor_out = false;
 	bool conveyor_in_active = false;
 	bool conveyor_out_active = false;
 
@@ -268,7 +271,7 @@ void opcontrol()
 		// conveyor forward
 
 		// intake code
-		//changed so when you press r1 it starts intaking and when you press again it stops
+		// changed so when you press r1 it starts intaking and when you press again it stops
 		if (master.get_digital_new_press(DIGITAL_R1))
 		{
 			intake_active = !intake_active;
@@ -285,61 +288,61 @@ void opcontrol()
 
 		if (intake_active)
 		{
-			intake_mg.move(300);
+			intake_mg.move(127);
 		}
 		else if (outake_active)
 		{
-			intake_mg.move(-300);
+			intake_mg.move(-127);
 		}
 		else
 		{
 			intake_mg.move(0);
 		}
 
+		// conveyor code - THIS CODE IS NOT NECESSARILY WORKING YET, WHY?
+		// changed so when you press r1 it starts intaking and when you press again it stops
+		if (master.get_digital_new_press(DIGITAL_L1))
+		{
+			conveyor_in_active = !conveyor_in_active;
+			conveyor_out_active = false;
+			pros::delay(20);
+		}
 
-		// conveyor code
-		//changed so when you press r1 it starts intaking and when you press again it stops
-		// if (master.get_digital_new_press(DIGITAL_L1))
-		// {
-		// 	conveyor_in = !conveyor_in;
-		// 	conveyor_out = false;
-		// 	pros::delay(20);
-		// }
+		else if (master.get_digital_new_press(DIGITAL_L2))
+		{
+			conveyor_out_active = !conveyor_out_active;
+			conveyor_in_active = false;
+			pros::delay(20);
+		}
 
-		// else if (master.get_digital_new_press(DIGITAL_L2))
-		// {
-		// 	conveyor_out = !conveyor_out;
-		// 	conveyor_in = false;
-		// 	pros::delay(20);
-		// }
-
-		// if (conveyor_in_active)
-		// {
-		// 	conveyor_mg.move(127);
-		// }
-		// else if (conveyor_out_active)
-		// {
-		// 	conveyor_mg.move(-127);
-		// }
-		// else
-		// {
-		// 	conveyor_mg.move(0);
-		// }
-
-		if (master.get_digital(DIGITAL_L1))
+		if (conveyor_in_active)
 		{
 			conveyor_mg.move(127);
 		}
-		// conveyor reverse
-		else if (master.get_digital(DIGITAL_L2))
+		else if (conveyor_out_active)
 		{
 			conveyor_mg.move(-127);
 		}
-		// stop the conveyor
 		else
 		{
 			conveyor_mg.move(0);
 		}
+
+		// ** WORKING CONVEYOR **
+		// if (master.get_digital(DIGITAL_L1))
+		// {
+		// 	conveyor_mg.move(127);
+		// }
+		// // conveyor reverse
+		// else if (master.get_digital(DIGITAL_L2))
+		// {
+		// 	conveyor_mg.move(-127);
+		// }
+		// // stop the conveyor
+		// else
+		// {
+		// 	conveyor_mg.move(0);
+		// }
 
 		// mogo mech
 		if (master.get_digital_new_press(DIGITAL_A))
@@ -357,7 +360,7 @@ void opcontrol()
 			mogo_solenoid.set_value(false);
 		}
 
-		//emergency buttons
+		// emergency buttons
 		if (master.get_digital_new_press(DIGITAL_RIGHT))
 		{
 			drive_forward(100, 0.25);
