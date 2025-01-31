@@ -154,7 +154,8 @@ void autonomous()
 	pros::delay(20);
 
 	control_intake(127, 5000); // 5 sec max speed
-
+	pros::delay(20);
+	
 	// // get goal
 	// mogo_solenoid.set_value(true);
 	// control_conveyor(127, 500); // active conveyor to score
@@ -317,11 +318,11 @@ void opcontrol()
 
 		if (conveyor_in_active)
 		{
-			conveyor_mg.move(127);
+			conveyor_mg.move(110);
 		}
 		else if (conveyor_out_active)
 		{
-			conveyor_mg.move(-127);
+			conveyor_mg.move(-110);
 		}
 		else
 		{
