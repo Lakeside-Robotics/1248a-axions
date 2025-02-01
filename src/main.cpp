@@ -97,18 +97,15 @@ void drive_backward(int speed, int duration_ms)
 
 void turn(int speed, int duration_ms)
 {
-	left_mg.move(speed);
-	right_mg.move(-speed);
+	left_mg.move(-speed);
+	right_mg.move(speed);
 	pros::delay(duration_ms);
 	left_mg.move(0);
 	right_mg.move(0);
 }
-
 void control_intake(int speed, int duration_ms)
 {
 	intake_mg.move(speed);
-	conveyor_mg.move(speed); // temporary-does conveyor move?
-
 	pros::delay(duration_ms);
 	intake_mg.move(0);
 }
@@ -150,39 +147,45 @@ void autonomous()
 	// pros::delay(2000);
 	// conveyor_mg.move(127);
 
-	drive_forward(100, 1500); // drive forward at speed 100 for 0.7 seconds. this makes the robot travel about 2 squares
-	pros::delay(20);
+	// drive_forward(100, 1500); // drive forward at speed 100 for 0.7 seconds. this makes the robot travel about 2 squares
+	// pros::delay(20);
 
-	control_intake(127, 5000); // 5 sec max speed
-	pros::delay(20);
-	
-	// // get goal
+	left_mg.move(-127);
+	right_mg.move(-127);
+	mogo_solenoid.set_value(true);
+	pros::delay(900); // move for 900 MS
+
+	// STOP
+	left_mg.move(0);
+	right_mg.move(0);
+
+	control_conveyor(127, 2000); // score
+
+	turn(100, 200); // turn RIGHT (so intake is facing mobile goal if we ever want to go backwards and get a 2nd ring to score) 
+
+	// drive forward into ladder
+	left_mg.move(-127);
+	right_mg.move(-127);
+	pros::delay(750);
+	left_mg.move(0);
+	right_mg.move(0);
+
+	// drive backwards
+	// left_mg.move(127);
+	// right_mg.move(127);
+
 	// mogo_solenoid.set_value(true);
-	// control_conveyor(127, 500); // active conveyor to score
-	// conveyor_mg.move(127);
-	// pros::delay(1000);
-	// // unclamp
-	// mogo_solenoid.set_value(false);
-
-	// conveyor_mg.move(0);
-	// pros::delay(500);
-	// turn(60, 400); // turn right at speed 60 for 2.5 seconds
+	// intake_mg.move(127);
 	// pros::delay(500);
 
-	// drive_forward(100, 2000);
-	// control_conveyor(127, 700);
-	// pros::delay(500);
-	// turn(60, 2500); // rotate again and drive towards ladder
-	// pros::delay(500);
-	// drive_forward(100, 3000);  // drive forward until contacting the ladder
+	// // recode our autonomous to drive fowrad for 1500ms, then pick up goal and score, then turn right and drive forward
+	// // now score
+	// control_conveyor(127, 2000); // score? hopefully
 
-	// // still need to add:
-	// // turn about 330 degree to the right
-	// // drive forward toward wall stake
-	// // score
-	// // drive backwards until you hit the ladder
-
-	// pros::delay(1000); // Run for 20 ms then update
+	// // now drive forward into ladder
+	// left_mg.move(127);
+	// right_mg.move(127);
+	// pros::delay(1500);
 }
 
 void arcade_drive()
@@ -318,11 +321,11 @@ void opcontrol()
 
 		if (conveyor_in_active)
 		{
-			conveyor_mg.move(110);
+			conveyor_mg.move(100);
 		}
 		else if (conveyor_out_active)
 		{
-			conveyor_mg.move(-110);
+			conveyor_mg.move(-127);
 		}
 		else
 		{
