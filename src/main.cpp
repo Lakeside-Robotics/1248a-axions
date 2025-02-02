@@ -117,18 +117,7 @@ void control_conveyor(int speed, int duration_ms)
 	conveyor_mg.move(0);
 }
 
-/**
- * Runs the user autonomous code. This function will be started in its own task
- * with the default priority and stack size whenever the robot is enabled via
- * the Field Management System or the VEX Competition Switch in the autonomous
- * mode. Alternatively, this function may be called in initialize or opcontrol
- * for non-competition testing purposes.
- *
- * If the robot is disabled or communications is lost, the autonomous task
- * will be stopped. Re-enabling the robot will restart the task, not re-start it
- * from where it left off.
- */
-void autonomous()
+void autonomous_left()
 {
 
 	// start really simple: https://www.youtube.com/shorts/ouInSnVIrC0
@@ -150,42 +139,119 @@ void autonomous()
 	// drive_forward(100, 1500); // drive forward at speed 100 for 0.7 seconds. this makes the robot travel about 2 squares
 	// pros::delay(20);
 
+	// AUTON
 	left_mg.move(-127);
 	right_mg.move(-127);
-	mogo_solenoid.set_value(true);
-	pros::delay(900); // move for 900 MS
-
-	// STOP
+	pros::delay(400);
 	left_mg.move(0);
 	right_mg.move(0);
 
-	control_conveyor(127, 2000); // score
+	control_conveyor(127, 3000); // score
+								 // drive backwards into stake
 
-	turn(100, 200); // turn RIGHT (so intake is facing mobile goal if we ever want to go backwards and get a 2nd ring to score) 
+	turn(50, 80); // turn RIGHT (so intake is facing mobile goal if we ever want to go backwards and get a 2nd ring to score)
 
-	// drive forward into ladder
-	left_mg.move(-127);
-	right_mg.move(-127);
-	pros::delay(750);
+	// 	//fwd
+
+	// 		left_mg.move(127);
+	// 	right_mg.move(127);
+	// 	pros::delay(500);
+	// 	left_mg.move(0);
+	// 	right_mg.move(0);
+
+	// //bwd slam
+	// 	left_mg.move(-127);
+	// 	right_mg.move(-127);
+	// 	pros::delay(600);
+
+	// fwd
+	left_mg.move(50);
+	right_mg.move(50);
+	pros::delay(1500);
 	left_mg.move(0);
 	right_mg.move(0);
 
-	// drive backwards
-	// left_mg.move(127);
-	// right_mg.move(127);
+	// FOLLOWING AUTON IS COMMENTED OUT
 
+	// left_mg.move(-127);
+	// right_mg.move(-127);
 	// mogo_solenoid.set_value(true);
-	// intake_mg.move(127);
-	// pros::delay(500);
+	// pros::delay(900); // move for 900 MS
 
-	// // recode our autonomous to drive fowrad for 1500ms, then pick up goal and score, then turn right and drive forward
-	// // now score
-	// control_conveyor(127, 2000); // score? hopefully
+	// // STOP
+	// left_mg.move(0);
+	// right_mg.move(0);
 
-	// // now drive forward into ladder
+	// // THE FOLLOWING AUTON IS COMMENTED OUT FOR COMP ON 2/1
+
+	// control_conveyor(127, 2000); // score
+
+	// turn(100, 200); // turn RIGHT (so intake is facing mobile goal if we ever want to go backwards and get a 2nd ring to score)
+
+	// // drive forward into ladder
+	// left_mg.move(-127);
+	// right_mg.move(-127);
+	// pros::delay(750);
+	// left_mg.move(0);
+	// right_mg.move(0);
+}
+
+void autonomous_right()
+{
+
+	// 1) move forward for 400 ms at max speed
+	left_mg.move(-127);
+	right_mg.move(-127);
+	pros::delay(350);
+	left_mg.move(0);
+	right_mg.move(0);
+
+	turn(-50, 160);
+
+	left_mg.move(-127);
+	right_mg.move(-127);
+	pros::delay(100);
+	left_mg.move(0);
+	right_mg.move(0);
+
+	// 2) Score for 3 seconds
+
+	control_conveyor(127, 4000);
+
+	// 3) Turn LEFT instead of right:
+	//    If left-side used turn(50, 80) for a right turn,
+	//    here we use turn(-50, 80) for a left turn.
+	turn(-50, 40);
+	// void turn(int speed, int duration_ms)
+
+	// 4) drive forward slowly for 0.2 seconds
+	left_mg.move(50);
+	right_mg.move(50);
+	pros::delay(1500);
+	left_mg.move(0);
+	right_mg.move(0);
+}
+
+void autonomous_special_round_5()
+{
+	pros::delay(10000);
+
+	left_mg.move(-127); // moves forward when the mogo mech is front
+	right_mg.move(-127);
+	pros::delay(500);
+	left_mg.move(0);
+	right_mg.move(0);
 	// left_mg.move(127);
 	// right_mg.move(127);
-	// pros::delay(1500);
+	// pros::delay(400);
+	// left_mg.move(0);
+	// right_mg.move(0);
+}
+
+void autonomous()
+{
+	// autonomous_left();
+	autonomous_right();
 }
 
 void arcade_drive()
