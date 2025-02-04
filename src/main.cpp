@@ -4,19 +4,15 @@
 pros::Controller master(pros::E_CONTROLLER_MASTER);
 pros::MotorGroup left_mg({1, -2, 3});
 
-// (1, 2, 3) tried
-// (1, 2, -3) tried
-// (1, -2, 3) tried
-// (1, -2, -3)
-// (-1, -2, -3)
-// 1 and 2 go same direction
 
-// pros::MotorGroup left_mg({1});
+bool IS_SKILLS_RUN = false;
+bool IS_LEFT_START = false;
 
 pros::MotorGroup right_mg({-4, 5, -6});
 pros::MotorGroup intake_mg({19});		// Controlled by right side buttons on controller
 pros::MotorGroup conveyor_mg({-20});	// Controlled by left side buttoms
 pros::ADIDigitalOut mogo_solenoid('H'); // Controlled by A and B buttons
+pros::ADIDigitalIn bumper_switch(1);  // Digital port 1
 
 /**
  * A callback function for LLEMU's center button.
@@ -115,6 +111,11 @@ void control_conveyor(int speed, int duration_ms)
 	conveyor_mg.move(speed);
 	pros::delay(duration_ms);
 	conveyor_mg.move(0);
+}
+
+// for skills run
+void autonomous_skills() {
+
 }
 
 void autonomous_left()
@@ -250,8 +251,15 @@ void autonomous_special_round_5()
 
 void autonomous()
 {
-	// autonomous_left();
-	autonomous_right();
+	if (IS_SKILLS_RUN) {
+		autonomous_skills();
+	} else {
+		if (IS_LEFT_START) {
+			autonomous_left();
+		} else {
+			autonomous_right();
+		}
+	}
 }
 
 void arcade_drive()
