@@ -116,7 +116,12 @@ void control_conveyor(int speed, int duration_ms)
 	pros::delay(duration_ms);
 	conveyor_mg.move(0);
 }
-
+/*
+Skills Challenge Scoring:
+each ring scored on a stake 1 pt
+each top ring scored on a stake 3 pt
+mobile goal in corner 5
+*/
 void autonomous_left()
 {
 
